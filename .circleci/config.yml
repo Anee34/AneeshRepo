@@ -12,7 +12,7 @@ jobs:
     steps:
       - run: 
           name: SSH_Into_EC2
-          command: ssh ubuntu@3.235.164.190 './demo-react-ssh.sh';
+          command: ssh ec2-user@ec2-18-183-216-23.ap-northeast-1.compute.amazonaws.com './demo-react-ssh.sh';
 
 workflows:
   build_and_push_image:
