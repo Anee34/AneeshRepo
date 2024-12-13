@@ -1,45 +1,58 @@
-version: 2.1 
-
+version: 2.1     
+  
 orbs:
   aws-ecr: circleci/aws-ecr@7.0.0
   aws-cli: circleci/aws-cli@2.0.0
   node: circleci/node@2.0.2
-
+ 
 jobs:
+  # Job to deploy the React app to EC2
   Deploy_React_App_On_EC2:
-    machine:
-      enabled: true
+    docker:
+      - image: cimg/node:18.0.0
     steps:
-      - run: 
-          name: SSH_Into_EC2
-          command: ssh ec2-user@ec2-2004.ap-northeast-1.compute.amazonaws.com './demo-react-ssh.sh';
-
-workflows:
+      - run:
+          name: SSH into EC2 and Deploy React App
+          command: |
+            ssh -i "Test-keypair.pem"-o StrictHostKeyChecking=no ec2-user@ec2-13-231-161-67.ap-northeast-1.compute.amazonaws.com './deployprivate.sh'
+ 
+  # Build and Push Docker Image to AWS ECR
   build_and_push_image:
-    jobs:
-      - aws-ecr/build-and-push-image:  # Corrected job name
+    docker:
+      - image: cimg/node:18.0.0  # or any other base image as per your requirement
+    steps:
+      - checkout
+      - setup_remote_docker
+      - aws-ecr/build-and-push-image:
           account-url: ECR_VARIABLE
           aws-access-key-id: ACCESS_KEYID
           aws-secret-access-key: SECRET_KEYID
-          dockerfile: Env/DockerFile
+          dockerfile: Env/Dockerfile
           path: .
-          no-output-timeout: 20m
           region: REGION_TOKYO
           repo: REPO
-          skip-when-tags-exist: false
           tag: latest,0.1$CIRCLE_BUILD_NUM
+ 
+  # Manual approval job for deployment
+  Deployment_React_Approval:
+    type: approval
+    requires:
+      - build_and_push_image
+ 
+workflows:
+  version: 2
+  build_and_push_image:
+    jobs:
+      - build_and_push_image:
           filters:
             branches:
               only: main
-          
       - Deployment_React_Approval:
-          type: approval
           requires:
-            - aws-ecr/build-and-push-image
+            - build_and_push_image
           filters:
-            branches: 
+            branches:
               only: main
-
       - Deploy_React_App_On_EC2:
           requires:
             - Deployment_React_Approval
