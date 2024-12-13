@@ -24,7 +24,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - aws-ecr/build-and-push-image:
-          account-url: ECR_VARIABLE
+          account-url: ACCOUNT_URL
           aws-access-key-id: ACCESS_KEYID
           aws-secret-access-key: SECRET_KEYID
           dockerfile: Env/Dockerfile
