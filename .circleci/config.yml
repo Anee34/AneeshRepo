@@ -14,7 +14,8 @@ jobs:
       - run:
           name: SSH into EC2 and Deploy React App
           command: |
-            ssh -i "Test-keypair.pem"-o StrictHostKeyChecking=no ec2-user@ec2-13-231-161-67.ap-northeast-1.compute.amazonaws.com './deployprivate.sh'
+            ssh -i "Test-keypair.pem" -o StrictHostKeyChecking=no ec2-user@ec2-13-231-161-67.ap-northeast-1.compute.amazonaws.com './deployprivate.sh'
+
  
   # Build and Push Docker Image to AWS ECR
   build_and_push_image:
