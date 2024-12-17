@@ -29,8 +29,8 @@ jobs:
           aws-secret-access-key: SECRET_KEYID
           dockerfile: Env/Dockerfile
           path: .
-          region: ap-northeast-1
-          repo: testing-ecr
+          region: REGION
+          repo: testing-ecr 
           tag: latest,0.1$CIRCLE_BUILD_NUM
  
   # Manual approval job for deployment
