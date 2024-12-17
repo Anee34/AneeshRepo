@@ -29,15 +29,15 @@ jobs:
           aws-secret-access-key: SECRET_KEYID
           dockerfile: Env/Dockerfile
           path: .
-          region: REGION_TOKYO
-          repo: REPO
+          region: ap-northeast-1
+          repo: testing-ecr
           tag: latest,0.1$CIRCLE_BUILD_NUM
  
   # Manual approval job for deployment
   Deployment_React_Approval:
     type: approval
     requires:
-      - build_and_push_image
+      - build_and_push_image 
  
 workflows:
   version: 2
